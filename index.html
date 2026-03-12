@@ -39,7 +39,7 @@ nav::-webkit-scrollbar{display:none}
 main{padding:24px;max-width:1600px;position:relative;margin:0 auto}
 .tp{display:block;opacity:0;pointer-events:none;position:absolute;width:100%;top:0;left:0}.tp.active{opacity:1;pointer-events:auto;position:relative}
 .kr{display:grid;gap:14px;margin-bottom:20px}
-.k3{grid-template-columns:repeat(3,1fr)}.k4{grid-template-columns:repeat(3,1fr)}
+.k3{grid-template-columns:repeat(3,1fr)}.k4{grid-template-columns:repeat(4,1fr)}
 .ka{grid-template-columns:repeat(auto-fill,minmax(185px,1fr))}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:box-shadow .2s ease,transform .2s ease}.card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.35);transform:translateY(-1px)}
 .csm{padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;min-height:110px}.csm .ct{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}.csm .kv{font-size:28px;font-weight:900;line-height:1}.csm-accent{position:relative;overflow:hidden}.csm-accent::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;opacity:.5}.csm-green::after{background:var(--green)}.csm-orange::after{background:var(--orange)}.csm-blue::after{background:var(--blue)}
@@ -106,10 +106,22 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(0,179,136,0.03)}
 .map-popup-util{margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,179,136,0.1)}
 .map-util-bar{height:5px;background:rgba(0,179,136,0.1);border-radius:3px;margin-top:4px;overflow:hidden}
 .map-util-fill{height:100%;border-radius:3px;transition:width .3s}
-.tkt-bar-section{height:480px;overflow-y:auto}
+.tkt-bar-section{height:auto;overflow-y:auto}
 .tkt-bar-section::-webkit-scrollbar{width:4px}
 .tkt-bar-section::-webkit-scrollbar-track{background:transparent}
 .tkt-bar-section::-webkit-scrollbar-thumb{background:rgba(0,179,136,0.2);border-radius:2px}
+.tkt-prog-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;padding:0 4px}
+.tkt-prog-leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:600}
+.tkt-prog-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tkt-progress-list{display:flex;flex-direction:column;gap:10px;padding:0 4px}
+.tkt-prog-row{display:grid;grid-template-columns:140px 1fr 60px;gap:8px;align-items:center}
+.tkt-prog-club{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tkt-prog-bars{display:flex;flex-direction:column;gap:3px}
+.tkt-prog-label{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.tkt-prog-track{display:flex;height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.04)}
+.tkt-prog-fill-used{height:100%;transition:width .4s ease}
+.tkt-prog-fill-rem{height:100%}
+.tkt-prog-stats{font-size:10px;text-align:right;line-height:1.6;font-variant-numeric:tabular-nums}
 .tkt-full-table{margin-top:16px}
 .tkt-table-wrap{max-height:400px;overflow-y:auto}
 .tkt-table-wrap::-webkit-scrollbar{width:4px}
@@ -485,7 +497,7 @@ header{
   <div class="login-left">
     <div class="login-left-content">
       <img class="login-left-logo" src="https://i.ibb.co/JF8xXxtJ/efl-sage-lockup-1.webp" alt="EFL x Sage">
-      <h1 class="login-left-headline">Official Accounting<br>Software Partner<br><span>of the EFL.</span></h1>
+      <h1 class="login-left-headline">Welcome to Your Live<br>Partnership Dashboard<br><span></span></h1>
       <p class="login-left-sub">2025/26 Season · Live Partnership Reporting</p>
       <div class="login-badges">
         <span class="login-badge">Championship</span>
@@ -692,9 +704,15 @@ function buildExec(){
   var wsS=getSheet(/web.session/i);
   var wsMon=null,wsYTD=null,wsLbl=null;
   if(wsS){
-    var wsMC=wsS.headers[2],wsDC=wsS.headers[3];
-    var wsRows=wsS.rows.filter(function(r){return r[wsMC]&&String(r[wsMC]).trim()&&pNum(r[wsDC])!==null;});
-    if(wsRows.length){wsLbl=wsRows[wsRows.length-1][wsMC];wsMon=pNum(wsRows[wsRows.length-1][wsDC]);wsYTD=wsRows.reduce(function(s,r){return s+(pNum(r[wsDC])||0);},0);}
+    var wsMC=wsS.headers[2]||wsS.headers.find(function(h){return/month|period|date/i.test(h);});
+    var wsDC=wsS.headers[3]||wsS.headers.find(function(h){return/session|visits/i.test(h);});
+    var wsRows=wsS.rows.filter(function(r){var m=String(r[wsMC]||'').trim();return m&&!/total|cumulative|ytd|2025.2026|season/i.test(m)&&pNum(r[wsDC])!==null;});
+    if(wsRows.length){
+      wsLbl=wsRows[wsRows.length-1][wsMC];
+      wsMon=pNum(wsRows[wsRows.length-1][wsDC]);
+      var _wsCum=0;wsRows.forEach(function(r){_wsCum+=(pNum(r[wsDC])||0);});
+      wsYTD=_wsCum;
+    }
   }
 
   // Row builders
@@ -867,6 +885,7 @@ function buildDigital(wsData,motmData,oohData){
     monthlyData.forEach(function(v){runTotal+=v;cumData.push(runTotal);});
     var latest=cumData.length?cumData[cumData.length-1]:0;
     var monthlyTotal=monthlyData.reduce(function(a,b){return a+b;},0);
+    window._wsYTD=latest;window._wsMon=monthlyData.length?monthlyData[monthlyData.length-1]:null;window._wsLbl=labels.length?labels[labels.length-1]:null;
     html+='<div class="kr k4" style="margin-bottom:16px">'
       +'<div class="card csm"><div class="ct">Sage.com Sessions to Date</div><div class="kv" style="color:var(--green)">'+fNum(latest)+'</div></div>'
       +'<div class="card csm"><div class="ct">Months Tracked</div><div class="kv">'+dr.length+'</div></div>'
@@ -1112,7 +1131,9 @@ function buildActivation(arData,bcData){
     html+='<div class="card"><div class="ct">Business Club Attendees by Month</div><div class="cw"><canvas id="act-attend"></canvas></div></div>';
     html+='<div class="card"><div class="ct">Business Club Attendees — Sector Representation</div><div class="cws"><canvas id="act-sec-avg"></canvas></div></div>';
     html+='</div>';
-    (function(lbl,ac,rows2,sl,sv,sc){setTimeout(function(){if(ac)barChart('act-attend',lbl,[{label:'Attendees',data:rows2.map(function(r){return pNum(r[ac]);}),color:'#00b388'}]);donutChart('act-sec-avg',sl,sv,sc);},100);})(bcLabels,attendCol,bcDr,allSL,mergedVals,mergedColors);
+    // Aggregate attendees by month label (sum multiple events in same month)
+    var monthTotals={};var monthOrder=[];bcDr.forEach(function(r,i){var lbl=bcLabels[i];if(monthTotals[lbl]===undefined){monthTotals[lbl]=0;monthOrder.push(lbl);}monthTotals[lbl]+=(pNum(r[attendCol])||0);});var aggLabels=monthOrder;var aggData=monthOrder.map(function(m){return monthTotals[m];});
+    (function(lbl,data,sl,sv,sc){setTimeout(function(){barChart('act-attend',lbl,[{label:'Attendees',data:data,color:'#00b388'}]);donutChart('act-sec-avg',sl,sv,sc);},100);})(aggLabels,aggData,allSL,mergedVals,mergedColors);
   }
 
   if(arData&&arData.rows){
@@ -1359,12 +1380,12 @@ html+='</tbody></table></div></div>';
         +'<div style="margin-bottom:1px"><div class="tkt-prog-label">GA</div>'
         +'<div class="tkt-prog-track">'
         +(gaTotal>0?'<div class="tkt-prog-fill-used" style="width:'+gaPct+'%;background:#009ee3"></div>'
-          +'<div class="tkt-prog-fill-rem" style="width:'+(100-gaPct)+'%;background:#009ee3"></div>':'')
+          +'<div class="tkt-prog-fill-rem" style="width:'+(100-gaPct)+'%;background:rgba(0,158,227,0.18)"></div>':'')
         +'</div></div>'
         +'<div><div class="tkt-prog-label">Hospitality</div>'
         +'<div class="tkt-prog-track">'
         +(hTotal>0?'<div class="tkt-prog-fill-used" style="width:'+hPct+'%;background:#f4a024"></div>'
-          +'<div class="tkt-prog-fill-rem" style="width:'+(100-hPct)+'%;background:#f4a024"></div>':'')
+          +'<div class="tkt-prog-fill-rem" style="width:'+(100-hPct)+'%;background:rgba(244,160,36,0.18)"></div>':'')
         +'</div></div>'
         +'</div>'
         +'<div class="tkt-prog-stats"><span style="color:#009ee3;font-weight:700">'+gaUsed+'</span> <span style="color:rgba(0,158,227,0.6)">/ '+gaTotal+'</span><br>'
@@ -1377,8 +1398,8 @@ html+='</tbody></table></div></div>';
   if(TKT_MAP){try{TKT_MAP.remove();}catch(e){}TKT_MAP=null;}
   var mapEl=document.getElementById('tkt-map');if(!mapEl||typeof L==='undefined')return;
   mapEl.style.width='100%';mapEl.style.height='100%';
-  TKT_MAP=L.map('tkt-map',{center:[53.5,-1.8],zoom:6,zoomControl:true,preferCanvas:true});
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy;CartoDB',maxZoom:19}).addTo(TKT_MAP);
+  TKT_MAP=L.map('tkt-map',{center:[53.5,-1.8],zoom:6,zoomControl:true,preferCanvas:true,attributionControl:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'',maxZoom:19}).addTo(TKT_MAP);
   setTimeout(function(){TKT_MAP.invalidateSize();},200);
   cr.forEach(function(r){var name=String(r[cn]||'').trim();if(/motm|other.comp/i.test(name))return;var coords=CLUB_COORDS[name];if(!coords)return;var used=pNum(r[tuc])||0;var gaAlloc=gaa?pNum(r[gaa])||20:20;var hAlloc=haa?pNum(r[haa])||4:4;var alloc=gaAlloc+hAlloc;var util=alloc>0?Math.round(used/alloc*100):0;var col=util>=80?'#e05c5c':util>=50?'#f4a024':'#00b388';var sz=used>20?14:used>10?11:8;var gaUsed=gac?pNum(r[gac])||0:0;var hUsed=huc?pNum(r[huc])||0:0;var gaLeft=glc?pNum(r[glc]):'';var hLeft=hlc?pNum(r[hlc]):'';L.circleMarker(coords,{radius:sz,fillColor:col,color:'rgba(8,15,13,0.8)',weight:1.5,fillOpacity:0.85}).bindPopup('<div class="map-popup"><div class="map-popup-name">'+name+'</div><div class="map-popup-row"><span class="map-popup-label">GA Used</span><span class="map-popup-val green">'+gaUsed+'</span></div><div class="map-popup-row"><span class="map-popup-label">GA Remaining</span><span class="map-popup-val">'+gaLeft+'</span></div><div class="map-popup-row"><span class="map-popup-label">Hosp Used</span><span class="map-popup-val" style="color:#f4a024">'+hUsed+'</span></div><div class="map-popup-row"><span class="map-popup-label">Hosp Remaining</span><span class="map-popup-val">'+hLeft+'</span></div><div class="map-popup-row"><span class="map-popup-label">Total Used</span><span class="map-popup-val">'+used+'</span></div><div class="map-popup-util"><div style="display:flex;justify-content:space-between"><span class="map-popup-label">Utilisation</span><span class="map-popup-val" style="color:'+col+'">'+util+'%</span></div><div class="map-util-bar"><div class="map-util-fill" style="width:'+util+'%;background:'+col+'"></div></div></div></div>',{maxWidth:220}).addTo(TKT_MAP);});
 },300);})(clubRows,totalUsedCol,gaUsedCol,hospUsedCol,gaLeftCol,hospLeftCol,gaAllocCol,hospAllocCol,clubCol);
@@ -1403,7 +1424,7 @@ function buildTicker(){
   var emS=getSheet(/email|crm/i);
   if(emS){var emDC=emS.headers[3],emFC=emS.headers[5];var emRows=emS.rows.filter(function(r){return pNum(r[emDC])!==null&&pNum(r[emDC])>0;});if(emRows.length){var tS=emRows.reduce(function(s,r){return s+(pNum(r[emDC])||0);},0),tC=emRows.reduce(function(s,r){return s+(pNum(r[emFC])||0);},0);var ctr=tS>0?parseFloat((tC/tS*100).toFixed(2)):null;if(ctr!==null)items.push('<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> <strong>CRM Click-Through Rate</strong> &middot; '+ctr+'%');}}
   var wsS=getSheet(/web.session/i);
-  if(wsS){var wsDC=wsS.headers[3];var wsRows=wsS.rows.filter(function(r){return pNum(r[wsDC])!==null;});if(wsRows.length){var wsYTD=wsRows.reduce(function(s,r){return s+(pNum(r[wsDC])||0);},0);items.push('<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zm-8-1c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm8-3H4V6h16v8z"/></svg> <strong>Sage.com Sessions YTD</strong> &middot; '+fNum(wsYTD));}}
+  if(wsS){var wsDC=wsS.headers.find(function(h){return/session|sage|visits/i.test(h);})||wsS.headers[3];var wsRows=wsS.rows.filter(function(r){return pNum(r[wsDC])!==null;});if(wsRows.length){var wsYTD=wsRows.reduce(function(s,r){return s+(pNum(r[wsDC])||0);},0);items.push('<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zm-8-1c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm8-3H4V6h16v8z"/></svg> <strong>Sage.com Sessions YTD</strong> &middot; '+fNum(wsYTD));}}
   items.push('<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg> <strong>EFL Clubs as Customers</strong> &middot; 37');
   items.push('<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> <strong>First-Party Data Collected</strong> &middot; 362');
   var sep='<span style="color:rgba(0,179,136,0.2);margin:0 24px">&bull;</span>';
@@ -1648,7 +1669,7 @@ function buildBrandTracking(){
 function fetchAndBuild(manual){
 var btn=document.getElementById('rbtn');
 var RSV='<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:middle"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>';
-if(btn){btn.classList.add('sp');btn.innerHTML=RSV+' Loading';}
+if(btn){btn.innerHTML=RSV+' Loading';}
 
 function onSuccess(data){
   buildDashboard(data);
@@ -1662,18 +1683,10 @@ function onFail(msg){
   showDataError(msg);
 }
 function cleanup(){
-  if(btn){btn.classList.remove('sp');btn.innerHTML=RSV+' Refresh';}
+  if(btn){btn.innerHTML=RSV+' Refresh';}
 }
 
-var isLocal = location.protocol === 'file:';
-
-if(isLocal){
-  // Local file: use fetch() — browsers allow cross-origin fetch from file:// to https://
-  fetch(ASURL, {redirect:'follow'})
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(data){ cleanup(); onSuccess(data); })
-    .catch(function(e){ cleanup(); onFail('Could not load data: '+e.message+'. Try opening via a web server or deploy to GitHub Pages.'); });
-} else {
+if(true){
   // Hosted (GitHub Pages etc): use JSONP to bypass CORS
   var cbName='dash_'+Date.now()+'_'+Math.floor(Math.random()*99999);
   var gasUrl=ASURL+'?callback='+cbName;
@@ -1716,26 +1729,7 @@ function showDataError(msg){
 
 var LOAD_PI=null;
 function startDashboard(){
-  // If opened as a local file, network requests are blocked by the browser.
-  // Go straight to the dashboard with an empty data set and show a banner.
-  if(location.protocol === 'file:'){
-    buildDashboard({});
-    onDataLoaded();
-    var loading=document.getElementById('loading');
-    loading.classList.add('hidden');
-    setTimeout(function(){loading.style.display='none';},300);
-    // Show a persistent banner
-    setTimeout(function(){
-      var banner=document.createElement('div');
-      banner.id='local-banner';
-      banner.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align:middle;margin-right:6px"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>'
-        +'<strong>Local file mode</strong> — live data unavailable. '
-        +'<a href="https://georgeburford7-bit.github.io/Sage-x-EFL-/" target="_blank" style="color:#00b388;text-decoration:underline">Open hosted version</a> for live data.';
-      banner.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(244,160,36,0.12);border-top:1px solid rgba(244,160,36,0.4);color:#f4a024;font-size:11px;font-family:Inter,sans-serif;padding:10px 20px;text-align:center;z-index:999;letter-spacing:.02em;';
-      document.body.appendChild(banner);
-    }, 600);
-    return;
-  }
+
   startLoadingMessages();
   var p=0;
   LOAD_PI=setInterval(function(){p=Math.min(p+8,88);setProgress(p);},200);
