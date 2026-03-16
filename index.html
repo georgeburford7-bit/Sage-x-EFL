@@ -28,23 +28,43 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── Login ── */
 #login-screen{
   position:fixed;inset:0;z-index:9999;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--bg);
+  display:flex;
 }
-#login-screen::before{
+.lw-image{
+  flex:1;
+  background:url('https://i.ibb.co/TxWtr98H/ULW44-BUWBNMD3-FAZ3-KT4-LMOVPI.jpg') center 80%/cover no-repeat;
+  position:relative;
+}
+.lw-image::after{
   content:'';position:absolute;inset:0;
-  background:url('https://i.ibb.co/TxWtr98H/ULW44-BUWBNMD3-FAZ3-KT4-LMOVPI.jpg') center/cover no-repeat;
-  opacity:.08;
+  background:linear-gradient(to right,transparent 60%,var(--bg) 100%);
+}
+.lw-image-text{
+  position:absolute;bottom:48px;left:48px;z-index:1;
+}
+.lw-image-headline{
+  font-size:clamp(28px,3vw,42px);font-weight:900;
+  color:#fff;line-height:1.1;letter-spacing:-.02em;
+  margin-bottom:10px;
+}
+.lw-image-headline span{color:#00D93A;}
+.lw-image-sub{
+  font-size:13px;color:rgba(255,255,255,0.55);
+  font-weight:300;letter-spacing:.02em;
 }
 .lw{
-  position:relative;z-index:1;
-  width:100%;max-width:400px;padding:20px;
+  width:420px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
+  padding:40px 48px;
+  border-left:1px solid var(--border);
 }
 .lw-card{
-  background:rgba(13,26,21,0.95);
-  border:1px solid var(--border);
-  border-radius:16px;padding:40px 36px;
-  backdrop-filter:blur(20px);
+  width:100%;
+}
+@media(max-width:768px){
+  .lw-image{display:none;}
+  .lw{width:100%;border-left:none;}
 }
 .lw-logo{
   display:block;height:36px;object-fit:contain;
@@ -372,18 +392,24 @@ footer{
 
 <!-- LOGIN -->
 <div id="login-screen">
+  <div class="lw-image">
+    <div class="lw-image-text">
+      <div class="lw-image-headline">Sage <span>Global</span><br>Sponsorship<br>Intelligence</div>
+      <div class="lw-image-sub">Powered by The Team</div>
+    </div>
+  </div>
   <div class="lw">
     <div class="lw-card">
       <img src="https://i.ibb.co/cSWs1ngx/sage-logo-svg.jpg" class="lw-logo" alt="Sage">
-      <div class="lw-title">Partnership Intelligence</div>
-      <div class="lw-sub">The Team x Sage · Restricted</div>
+      <div class="lw-title">Welcome Back</div>
+      <div class="lw-sub">Sign in to access the platform</div>
       <label class="lw-label" for="le">Email Address</label>
       <input class="lw-input" type="email" id="le" placeholder="you@example.com" autocomplete="email">
       <label class="lw-label" for="lp">Password</label>
       <input class="lw-input" type="password" id="lp" placeholder="••••••••" autocomplete="current-password">
       <button class="lw-btn" onclick="attemptLogin()">Access Platform</button>
       <p class="lw-err" id="lerr"></p>
-      <p class="lw-foot">For access requests contact your<br>The Team account manager</p>
+      <p class="lw-foot">For access requests contact your account manager</p>
     </div>
   </div>
 </div>
@@ -447,7 +473,7 @@ footer{
     <!-- EFL -->
     <a class="pcard live" href="efl.html">
       <div class="pcard-img-wrap">
-        <img class="pcard-img" loading="lazy" decoding="async" src="https://cdn.jsdelivr.net/gh/georgeburford7-bit/Sage-x-EFL@main/efl-hero.jpg" alt="EFL">
+        <img class="pcard-img" loading="lazy" decoding="async" src="https://i.ibb.co/23jV1Ht8/shutterstock-editorial-16681496bw.jpg" alt="EFL">
         <div class="pcard-img-fade"></div>
         <img class="pcard-lockup invert" src="https://i.ibb.co/JF8xXxtJ/efl-sage-lockup-1.webp" alt="EFL x Sage">
         <span class="pcard-badge live-b">Live</span>
