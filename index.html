@@ -609,7 +609,10 @@ footer{
 var LOGIN_KEY='sageEFLauth';
 var USERS=[
   {email:'george.burford@teamwass.com',password:'englishfootballleague2024'},
-  {email:'sally.moore@sage.com',password:'englishfootballleague2024'}
+  {email:'sally.moore@sage.com',password:'englishfootballleague2024'},
+  {email:'caitlin.mcroy@sage.com',password:'efl2024'},
+  {email:'jasmin.sharpe@sage.com',password:'efl2025'},
+  {email:'theteamadmin@the.team',password:'sagepartnerships2026'}
 ];
 
 function checkLogin(){
@@ -646,6 +649,15 @@ function attemptLogin(){
   var m=USERS.find(function(u){return u.email.toLowerCase()===email&&u.password===pass;});
   if(m){
     localStorage.setItem(LOGIN_KEY,btoa(JSON.stringify({ok:true,email:email,ts:Date.now()})));
+    // Track login event in GA4
+    try{
+      if(typeof gtag==='function'){
+        gtag('event','platform_login',{
+          'user_email': email,
+          'login_timestamp': new Date().toISOString()
+        });
+      }
+    }catch(e){}
     showHub();
   } else {
     err.textContent='Incorrect email or password.';
