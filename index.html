@@ -624,8 +624,18 @@ var USERS=[
 ];
 
 function checkLogin(){
-  try{var s=localStorage.getItem(LOGIN_KEY);if(s){var p=JSON.parse(atob(s));if(p.ok&&p.ts&&(Date.now()-p.ts)<30*24*60*60*1000)return true;}}catch(e){}
+  try{var s=localStorage.getItem(LOGIN_KEY);if(s){var p=JSON.parse(atob(s));if(p.ok&&p.ts&&(Date.now()-p.ts)<30*24*60*60*1000)return p;}}catch(e){}
   return false;
+}
+function logVisit(email,type){
+  try{
+    fetch('https://script.google.com/macros/s/AKfycbzvonHmErzwYeIUOwflGyWyIc2Opcy5hiacCAK9sDwnEtEi1w92L90tEjI9mR3Qea93/exec',{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,timestamp:new Date().toISOString(),type:type||'visit'})
+    });
+  }catch(e){}
 }
 function warmupGAS(){
   // Silent ping to wake up Google Apps Script so EFL dashboard loads faster
@@ -666,15 +676,7 @@ function attemptLogin(){
         });
       }
     }catch(e){}
-    // Log login to Google Sheet
-    try{
-      fetch('https://script.google.com/macros/s/AKfycbzvonHmErzwYeIUOwflGyWyIc2Opcy5hiacCAK9sDwnEtEi1w92L90tEjI9mR3Qea93/exec',{
-        method:'POST',
-        mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({email:email,timestamp:new Date().toISOString()})
-      });
-    }catch(e){}
+    logVisit(email,'login');
     showHub();
   } else {
     err.textContent='Incorrect email or password.';
@@ -693,7 +695,8 @@ document.addEventListener('keydown',function(e){
 });
 
 // Init
-if(checkLogin())showHub();
+var _sess=checkLogin();
+if(_sess){logVisit(_sess.email,'visit');showHub();}
 </script>
 </body>
 </html>
