@@ -874,6 +874,31 @@ function buildSocialCampaignsInner(data){
 
 function buildDigital(wsData,motmData,oohData){
   var html='';
+
+  // ── Campaign Report Card ──────────────────────────────────────────────────
+  html+='<div class="card" style="margin-bottom:20px;padding:24px 28px;position:relative;overflow:hidden">';
+  html+='<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--blue))"></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center">';
+  html+='<div>';
+  html+='<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:10px">Campaign Overview</div>';
+  html+='<div style="font-size:18px;font-weight:900;color:#e8f4f0;margin-bottom:10px;line-height:1.3">Sage x EFL: Mass Fan Competition</div>';
+  html+='<p style="font-size:12px;color:var(--muted);line-height:1.75;max-width:620px;font-weight:300">The Behind the Badge competition ran across all 72 EFL clubs, inviting fans to nominate a deserving local business. Sage reached over 2.5 million fans across EFL digital channels, generating significant first-party data capture and brand engagement with Sage\'s core small business audience. The campaign ran from August through to the competition close, spanning Championship, League One, League Two and cup competitions.</p>';
+  html+='<div style="display:flex;gap:28px;margin-top:16px;flex-wrap:wrap">';
+  html+='<div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Campaign</div><div style="font-size:14px;font-weight:900;color:#e8f4f0">Behind the Badge</div></div>';
+  html+='<div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Season</div><div style="font-size:14px;font-weight:900;color:#e8f4f0">2025/26</div></div>';
+  html+='<div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Competitions</div><div style="font-size:14px;font-weight:900;color:#e8f4f0">All 5 EFL</div></div>';
+  html+='<div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Clubs</div><div style="font-size:14px;font-weight:900;color:#e8f4f0">All 72</div></div>';
+  html+='</div>';
+  html+='</div>';
+  html+='<div style="text-align:center;flex-shrink:0">';
+  html+='<a href="sage_efl_strategic_narrative__1_.html" target="_blank" style="display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:rgba(0,179,136,0.1);border:1px solid rgba(0,179,136,0.3);color:#00b388;padding:18px 22px;border-radius:10px;text-decoration:none;transition:all .2s;min-width:130px" onmouseover="this.style.background=\'rgba(0,179,136,0.18)\';this.style.borderColor=\'var(--green)\'" onmouseout="this.style.background=\'rgba(0,179,136,0.1)\';this.style.borderColor=\'rgba(0,179,136,0.3)\'">';
+  html+='<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>';
+  html+='<span style="font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-align:center;line-height:1.4">View Full<br>Report</span>';
+  html+='</a>';
+  html+='</div>';
+  html+='</div>';
+  html+='</div>';
+
   if(wsData&&wsData.headers&&wsData.rows){
     var h=wsData.headers,rows=wsData.rows;
     var monthCol=h[2]||h.find(function(c){return/month|period/i.test(c);});
@@ -1455,10 +1480,10 @@ if(aKey)addTab(slug(aKey),'Attendance',buildAttendance(data[aKey]));
 if(tkKey)addTab(slug(tkKey),'Ticketing',buildTicketing(data[tkKey]));
 if(scKey||osKey||psKey)addTab('social-media','Social Media',buildSocialMedia(scKey?data[scKey]:null,osKey?data[osKey]:null,psKey?data[psKey]:null));
 if(wsKey||motmKey||digitalKey)addTab('digital','Digital & Out-of-Home',buildDigital((wsKey||digitalKey)?data[wsKey||digitalKey]:null,motmKey?data[motmKey]:null,psKey?data[psKey]:null));
-if(emailKey)addTab(slug(emailKey),'Email/CRM',buildEmailCRM(data[emailKey]));
+// Email/CRM tab removed
 if(arKey||bcKey)addTab('activation','Activation',buildActivation(arKey?data[arKey]:null,bcKey?data[bcKey]:null));
 var handled=[bKey,aKey,scKey,tkKey,osKey,psKey,wsKey,motmKey,emailKey,arKey,bcKey,digitalKey].filter(Boolean);
-for(var name in data){if(handled.indexOf(name)>=0)continue;addTab(slug(name),name,buildSection(name,data[name]));}
+for(var name in data){if(handled.indexOf(name)>=0)continue;if(/attribution/i.test(name))continue;addTab(slug(name),name,buildSection(name,data[name]));}
 addTab('brand','Brand Tracking',buildBrandTracking());
 addTab('gallery','Gallery',document.getElementById('tmpl-gallery').innerHTML);
   tabs.forEach(function(t){var btn=document.createElement('span');btn.className='nb';btn.setAttribute('data-id',t.id);btn.textContent=t.label;(function(tid,b){btn.onclick=function(){switchTab(tid,b);};})(t.id,btn);nav.appendChild(btn);});
