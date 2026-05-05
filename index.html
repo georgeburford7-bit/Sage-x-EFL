@@ -37,89 +37,6 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 
-/* ── Login ── */
-#login-screen{
-  position:fixed;inset:0;z-index:9999;
-  display:flex;
-}
-.lw-image{
-  flex:1;
-  background:url('https://i.ibb.co/TxWtr98H/ULW44-BUWBNMD3-FAZ3-KT4-LMOVPI.jpg') center bottom/cover no-repeat;
-  position:relative;
-}
-.lw-image::after{
-  content:'';position:absolute;inset:0;
-  background:
-    linear-gradient(to right,transparent 60%,var(--bg) 100%),
-    linear-gradient(to top,rgba(8,15,13,0.92) 0%,rgba(8,15,13,0.4) 35%,transparent 60%);
-}
-.lw-image-text{
-  position:absolute;bottom:48px;left:48px;z-index:1;
-}
-.lw-image-headline{
-  font-size:clamp(28px,3vw,42px);font-weight:900;
-  color:#fff;line-height:1.1;letter-spacing:-.02em;
-  margin-bottom:10px;
-  text-shadow:0 2px 20px rgba(0,0,0,0.8);
-}
-.lw-image-headline span{color:#00D93A;}
-.lw-image-sub{
-  font-size:13px;color:rgba(255,255,255,0.55);
-  font-weight:300;letter-spacing:.02em;
-}
-.lw{
-  width:420px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--bg);
-  padding:40px 48px;
-  border-left:1px solid var(--border);
-}
-.lw-card{
-  width:100%;
-}
-@media(max-width:768px){
-  .lw-image{display:none;}
-  .lw{width:100%;border-left:none;}
-}
-.lw-logo{
-  display:block;height:36px;object-fit:contain;
-  margin:0 auto 32px;
-}
-.lw-title{
-  font-size:18px;font-weight:900;letter-spacing:.04em;
-  text-align:center;margin-bottom:4px;color:var(--text);
-}
-.lw-sub{
-  text-align:center;font-size:11px;color:var(--muted);
-  margin-bottom:28px;letter-spacing:.06em;text-transform:uppercase;
-}
-.lw-label{
-  display:block;font-size:9px;font-weight:700;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--muted);margin-bottom:6px;
-}
-.lw-input{
-  width:100%;padding:12px 14px;margin-bottom:12px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);border-radius:8px;
-  color:var(--text);font-family:'Inter',sans-serif;font-size:13px;
-  outline:none;transition:border-color .2s;
-}
-.lw-input:focus{border-color:rgba(0,217,58,0.4);}
-.lw-btn{
-  width:100%;padding:13px;margin-top:4px;
-  background:linear-gradient(135deg,#00D93A,#00D93A);
-  border:none;border-radius:8px;color:#fff;
-  font-family:'Inter',sans-serif;font-size:12px;font-weight:900;
-  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
-  transition:opacity .2s,transform .15s;
-}
-.lw-btn:hover{opacity:.9;transform:translateY(-1px);}
-.lw-err{color:#ff6b6b;font-size:11px;text-align:center;margin-top:10px;min-height:14px;}
-.lw-foot{
-  text-align:center;font-size:10px;color:var(--muted);
-  margin-top:20px;line-height:1.6;
-}
-
 /* ── Header ── */
 header{
   position:fixed;top:0;left:0;right:0;z-index:100;height:64px;
@@ -362,8 +279,6 @@ footer{
 .pcard:nth-child(3){animation-delay:.2s}
 .pcard:nth-child(4){animation-delay:.26s}
 
-.hidden{display:none!important}
-
 /* Welcome banner */
 .welcome-banner{
   display:flex;align-items:flex-start;justify-content:space-between;gap:40px;
@@ -405,42 +320,18 @@ footer{
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="lw-image">
-    <div class="lw-image-text">
-      <div class="lw-image-headline">Sage <span>Global</span><br>Sponsorship<br>Intelligence</div>
-      <div class="lw-image-sub">Powered by The Team</div>
-    </div>
-  </div>
-  <div class="lw">
-    <div class="lw-card">
-      <img src="https://i.ibb.co/cSWs1ngx/sage-logo-svg.jpg" class="lw-logo" alt="Sage">
-      <div class="lw-title">Welcome Back</div>
-      <div class="lw-sub">Sign in to access the platform</div>
-      <label class="lw-label" for="le">Email Address</label>
-      <input class="lw-input" type="email" id="le" placeholder="you@example.com" autocomplete="email">
-      <label class="lw-label" for="lp">Password</label>
-      <input class="lw-input" type="password" id="lp" placeholder="••••••••" autocomplete="current-password">
-      <button class="lw-btn" onclick="attemptLogin()">Access Platform</button>
-      <p class="lw-err" id="lerr"></p>
-      <p class="lw-foot">For access requests contact your account manager</p>
-    </div>
-  </div>
-</div>
-
 <!-- HEADER -->
-<header id="hdr" style="display:none">
+<header id="hdr">
   <img src="https://i.ibb.co/cSWs1ngx/sage-logo-svg.jpg" class="h-logo" alt="Sage">
   <div class="h-right">
     <div class="h-pulse-wrap"><span class="h-dot"></span>Live</div>
     <div class="h-clock" id="clk">--:--:--</div>
-    <button class="h-out" onclick="logout()">Sign Out</button>
+    <button class="h-out" onclick="window.location.href='/.cdn-cgi/access/logout'">Sign Out</button>
   </div>
 </header>
 
 <!-- HERO -->
-<section class="hero" id="hero" style="display:none">
+<section class="hero" id="hero">
   
   <div class="hero-overlay"></div>
   <div class="hero-glow"></div>
@@ -465,7 +356,7 @@ footer{
 </section>
 
 <!-- MAIN -->
-<main id="mn" style="display:none">
+<main id="mn">
   <div class="welcome-banner">
     <div class="welcome-left">
       <div class="welcome-label">Welcome to the Platform</div>
@@ -608,26 +499,12 @@ footer{
   </div>
 </main>
 
-<footer id="ft" style="display:none">
+<footer id="ft">
   <div class="ft">Sage Partnership Intelligence · Powered by The Team</div>
   <div class="ft" id="ft-date"></div>
 </footer>
 
 <script>
-var LOGIN_KEY='sageEFLauth';
-var USERS=[
-  {email:'george.burford@teamwass.com',password:'englishfootballleague2025'},
-  {email:'Victoria.Hartley2@sage.com',password:'englishfootballleague2026'},
-  {email:'sally.moore@sage.com',password:'englishfootballleague2024'},
-  {email:'caitlin.mcroy@sage.com',password:'efl2024'},
-  {email:'jasmin.sharpe@sage.com',password:'efl2025'},
-  {email:'theteamadmin@the.team',password:'sagepartnerships2026'}
-];
-
-function checkLogin(){
-  try{var s=localStorage.getItem(LOGIN_KEY);if(s){var p=JSON.parse(atob(s));if(p.ok&&p.ts&&(Date.now()-p.ts)<30*24*60*60*1000)return p;}}catch(e){}
-  return false;
-}
 function logVisit(email,type){
   try{
     fetch('https://script.google.com/macros/s/AKfycbzvonHmErzwYeIUOwflGyWyIc2Opcy5hiacCAK9sDwnEtEi1w92L90tEjI9mR3Qea93/exec',{
@@ -639,7 +516,6 @@ function logVisit(email,type){
   }catch(e){}
 }
 function warmupGAS(){
-  // Silent ping to wake up Google Apps Script so EFL dashboard loads faster
   try{
     var cb='warmup_'+Date.now();
     var s=document.createElement('script');
@@ -649,55 +525,16 @@ function warmupGAS(){
     document.head.appendChild(s);
   }catch(e){}
 }
-function showHub(){
-  document.getElementById('login-screen').classList.add('hidden');
-  ['hdr','hero','mn','ft'].forEach(function(id){document.getElementById(id).style.display='';});
-  document.getElementById('hdr').style.display='flex';
-  document.getElementById('hero').style.display='flex';
-  document.getElementById('mn').style.display='block';
-  document.getElementById('ft').style.display='flex';
-  document.getElementById('ft-date').textContent='Accessed '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-  // Warm up GAS in background so EFL dashboard loads faster
-  setTimeout(warmupGAS, 1500);
-}
-function attemptLogin(){
-  var email=(document.getElementById('le').value||'').trim().toLowerCase();
-  var pass=(document.getElementById('lp').value||'').trim();
-  var err=document.getElementById('lerr');
-  err.textContent='';
-  var m=USERS.find(function(u){return u.email.toLowerCase()===email&&u.password===pass;});
-  if(m){
-    localStorage.setItem(LOGIN_KEY,btoa(JSON.stringify({ok:true,email:email,ts:Date.now()})));
-    // Track login event in GA4
-    try{
-      if(typeof gtag==='function'){
-        gtag('event','platform_login',{
-          'user_email': email,
-          'login_timestamp': new Date().toISOString()
-        });
-      }
-    }catch(e){}
-    logVisit(email,'login');
-    showHub();
-  } else {
-    err.textContent='Incorrect email or password.';
-    document.getElementById('lp').value='';
-    document.getElementById('lp').focus();
-  }
-}
-function logout(){localStorage.removeItem(LOGIN_KEY);location.reload();}
 
 // Clock
 setInterval(function(){document.getElementById('clk').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});},1000);
 
-// Enter key
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!document.getElementById('login-screen').classList.contains('hidden'))attemptLogin();
-});
+// Footer date
+document.getElementById('ft-date').textContent='Accessed '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
-// Init
-var _sess=checkLogin();
-if(_sess){logVisit(_sess.email,'visit');showHub();}
+// Log visit and warm up GAS
+logVisit('authenticated-user','visit');
+setTimeout(warmupGAS, 1500);
 </script>
 </body>
 </html>
